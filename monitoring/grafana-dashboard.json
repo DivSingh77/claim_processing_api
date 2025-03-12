@@ -1,0 +1,45 @@
+{
+  "groups": [
+    {
+      "name": "api_alerts",
+      "rules": [
+        {
+          "alert": "HighLatency",
+          "expr": "histogram_quantile(0.95, rate(response_time[5m])) > 0.5",
+          "for": "1m",
+          "labels": {
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "High API Latency detected",
+            "description": "95th percentile response time exceeded 500ms."
+          }
+        },
+        {
+          "alert": "HighErrorRate",
+          "expr": "increase(request_count{status=\"500\"}[5m]) > 5",
+          "for": "1m",
+          "labels": {
+            "severity": "critical"
+          },
+          "annotations": {
+            "summary": "High API Error Rate",
+            "description": "More than 5 errors in the last 5 minutes."
+          }
+        },
+        {
+          "alert": "ServiceDown",
+          "expr": "up == 0",
+          "for": "2m",
+          "labels": {
+            "severity": "critical"
+          },
+          "annotations": {
+            "summary": "API Service is Down",
+            "description": "No response from API for the last 2 minutes."
+          }
+        }
+      ]
+    }
+  ]
+}
