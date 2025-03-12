@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s  # How often to scrape targets
+
+scrape_configs:
+  - job_name: "fastapi_app"
+    static_configs:
+      - targets: ["172.17.0.1:8000"]  # FastAPI service running locally
+
+  - job_name: "prometheus_self"
+    static_configs:
+      - targets: ["localhost:9090"]  # Prometheus itself

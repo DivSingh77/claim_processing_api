@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy.orm import Session
 
 from backend.auth import verify_jwt_token
@@ -7,6 +8,9 @@ from backend.metrics import REQUEST_COUNT
 from backend.models import Base, Claim, SessionLocal, engine
 
 app = FastAPI()
+
+# Instrument FastAPI for Prometheus
+Instrumentator().instrument(app).expose(app)
 
 # Initialize the database
 Base.metadata.create_all(bind=engine)
@@ -17,6 +21,10 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI Monitoring with Prometheus"}
 
 @app.get("/health")
 def health_check():
